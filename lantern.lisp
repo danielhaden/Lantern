@@ -1,26 +1,29 @@
-(In-package :common-lisp-user)
+(in-package #:common-lisp-user)
 
-(defpackage :tab-study
-  (:use :clim-lisp :clim-tab-layout)
-  (:export :tab-study))
+(defpackage #:lantern
+  (:use #:clim #:clim-lisp #:clim-tab-layout)
+  (:export #:lantern-run))
+    
+(in-package #:lantern)
 
-(in-package :tab-study)
+;;; PANE CLASSES
+(defclass sheet-pane (application-pane)
+  ())
 
-(clim:define-application-frame tab-study ()
-  ()
+
+(define-application-frame lantern ()
+  ((design-entities :accessor entities))
   (:panes
-   (a :text-editor :value "This is a text-editor pane")
-   (b :text-editor :value "This is pane B!")
-   (c :text-editor :value "This is pane C!"))
+   (list-box :application :height 800 :width 200)
+   (canvas sheet-pane :width 800)
+   (interactor :interactor))
   (:layouts
-   (default
-    (clim:vertically ()
-      (with-tab-layout ('tab-page :name 'tab-study-layout :height 200)
-	("Text Editor" a :drawing-options `(:text-style ,(clim:make-text-style nil :bold nil)))
-	("B" b)
-	("C" c))))))
+   (default (vertically ()
+	      (horizontally ()
+		list-box
+		canvas)
+	      interactor))))
+(defun lantern-run ()
+  (clim:run-frame-top-level (clim:make-application-frame 'lantern)))
 
-(defun run ()
-  (clim:run-frame-top-level (clim:make-application-frame 'tab-study)))
-
-(run)
+(lantern-run)
